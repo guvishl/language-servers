@@ -74,12 +74,24 @@ The repository includes the following language server implementations:
 - Handles notification management across language servers
 - Coordinates messaging between servers and clients
 
+#### **ANTLR4 Language Server** (`aws-lsp-antlr4`)
+- Generic ANTLR4 LSP server for grammar development
+- Provides diagnostics and completion for ANTLR grammars
+- Supports parsers/lexers generated from `*.g4` files by antlr4ng and antlr4-c3
+- Includes integration test support with PostgreSQL grammar examples
+
 ### Example/Template Servers
 
 #### **Hello World Language Server** (`hello-world-lsp`)
 - Template and example implementation for creating new language servers
 - Demonstrates best practices and basic structure
 - Useful starting point for custom language server development
+
+#### **Device SSO Auth Language Server** (`device-sso-auth-lsp`)
+- Example implementation of Device authentication SSO flow
+- Port of SSO flow implementation from VSCode sample client as LSP server
+- Supports only standalone AWS Server Runtime (requires Node.js `fs` access)
+- Demonstrates device authentication flow with token caching
 
 ## Supported IDE Clients
 
@@ -160,15 +172,19 @@ The repository supports multiple authentication mechanisms for secure AWS servic
 - **@smithy/types**: Type definitions for AWS SDK v3
 
 ### **Specialized Technologies**
-- **WebAssembly (WASM)**: For high-performance parsers (PartiQL, Tree-sitter)
-- **ANTLR4**: For lexer and parser generation (PartiQL)
+- **WebAssembly (WASM)**: For high-performance parsers (PartiQL with Rust parser, Tree-sitter for parsing)
+- **ANTLR4**: For lexer and parser generation (PartiQL, generic ANTLR4 server)
+- **ANTLR4ng**: Next-generation ANTLR4 TypeScript runtime for grammar processing
+- **ANTLR4-c3**: Code completion core library for ANTLR4 grammars
 - **MynahUI**: Web-based chat interface for Amazon Q
+- **Tree-sitter**: Incremental parsing library used via WebAssembly
 
 ### **Testing Frameworks**
-- **Jest**: Testing framework for PartiQL server
-- **Mocha**: Testing framework for identity and notification servers
-- **Chai**: Assertion library
-- **Sinon**: Test doubles and mocking
+- **Jest**: Testing framework for PartiQL and ANTLR4 servers
+- **Mocha**: Testing framework for CodeWhisperer, identity and notification servers
+- **Chai**: Assertion library used with Mocha tests
+- **Sinon**: Test doubles and mocking library
+- **ts-mocha**: TypeScript-enabled Mocha test runner
 
 ### **Development Tools**
 - **ESLint**: Code linting and quality enforcement
@@ -262,6 +278,7 @@ The repository follows a three-layer architecture designed for reusability and m
 - Package for specific runtime environments
 - One binary can contain multiple language servers
 - Designed for integration into IDE extensions
+- Includes specialized bundles like `aws-lsp-yaml-json-webworker` for browser environments
 
 ### Monorepo Structure
 ```
@@ -273,7 +290,9 @@ language-servers/
 │   ├── visualStudio/      # Visual Studio extension
 │   └── vscode/            # VSCode extension
 ├── core/                   # Supporting libraries
-│   └── aws-lsp-core/      # Core utilities and interfaces
+│   ├── aws-lsp-core/      # Core utilities and interfaces
+│   ├── codewhisperer-streaming/  # CodeWhisperer streaming client package
+│   └── q-developer-streaming-client/  # Q Developer streaming client package
 ├── server/                 # Language server implementations
 │   ├── aws-lsp-codewhisperer/
 │   ├── aws-lsp-partiql/
@@ -284,6 +303,8 @@ language-servers/
 │   ├── aws-lsp-buildspec/
 │   ├── aws-lsp-s3/
 │   ├── aws-lsp-notification/
+│   ├── aws-lsp-antlr4/
+│   ├── device-sso-auth-lsp/
 │   └── hello-world-lsp/
 └── script/                 # Build and maintenance scripts
 ```
